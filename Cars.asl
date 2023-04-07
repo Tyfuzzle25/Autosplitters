@@ -165,7 +165,7 @@ init
 			version = "FI";
 			break;
 		case "937AB1102AF423CE8C6F3166F1EBE317":		// steamunlocked
-			version = "Gibstack's 'legit' copy";
+			version = "SU";
 			break;
 	}
 }
