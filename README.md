@@ -5,4 +5,4 @@ To download a file:
 - Right click on Raw at the top
 - Click "Save link as..." and save it somewhere. The file should end with ".asl"
 
-You can then add a "Scriptable Autosplitter" to your LiveSplit layout and find the file.
+You can then add a "Scriptable Autosplitter" to your LiveSplit layout and find the asl file you just downloaded.
