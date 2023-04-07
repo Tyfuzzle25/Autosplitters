@@ -94,9 +94,24 @@ state("Cars", "FI")
 	int loadScreen	: 0x3C38E8, 0x30, 0x4C;									// 1 whilst loading, else 0
 }
 
+state("Cars", "SU")
+{
+	int gameState	: 0x3C6D44, 0x8;										// 1 on Main Menu, 0 on Opening Cutscene, works on compatibility mode
+	int trophyCount	: 0x3C48DC, 0x28;										// Running total of gained trophies
+	int inRace		: 0x3B6CE4, 0x10, 0x10, 0x10, 0x2D8,  0x14, 0xC, 0x8C;	// 0 on completion of Race, 1 during Race, 2 on Countdown, -1 in Hub World
+	int loadScreen	: 0x3C48E8, 0x30, 0x4C;									// 1 whilst loading, else 0
+}
+
+startup
+{
+	refreshRate = 30;
+	settings.Add("loadRemover", false, "Load Remover");
+	settings.SetToolTip("loadRemover", @"Allows for loadless timing when ''Game Time'' is selected under ''Compare Against'' in livesplit");
+}
+
 init
 {
-	refreshRate = 30;														// Game runs at 30FPS, default refresh of 60 (the default) is excessive
+	//refreshRate = 30;														// Game runs at 30FPS, default refresh of 60 (the default) is excessive
 	
 	// Version checking.
 	print("ModuleMemorySize: " + modules.First().ModuleMemorySize.ToString());	// Lets DebugView show the ModuleMemorySize of the executable
@@ -149,6 +164,9 @@ init
 		case "FAC76F0BE2A8B20294C7EED2C1072AA4":		// Finnish exe
 			version = "FI";
 			break;
+		case "937AB1102AF423CE8C6F3166F1EBE317":		// steamunlocked
+			version = "Gibstack's 'legit' copy";
+			break;
 	}
 }
 
@@ -167,7 +185,7 @@ split
 		vars.hasSplit = 1;
 		return true;
 	}
-	else if (current.trophyCount > old.trophyCount && vars.hasSplit == 0)
+	else if (current.trophyCount > old.trophyCount && vars.hasSplit == 0)	// Splits if trophy count increases out of race (luigi, tractor tipping etc)
 	{
 		return true;
 	}
@@ -177,7 +195,6 @@ start
 {
 	if (old.gameState == 1 && current.gameState == 0 && old.trophyCount == 0 && current.trophyCount == 0)
 	{
-		print("GameState: " + current.gameState);
 		return true;
 	}
 }
@@ -192,5 +209,8 @@ reset
 
 isLoading
 {
-	return current.loadScreen == 1;
+	if (settings["loadRemover"])
+	{
+		return current.loadScreen == 1;
+	}
 }
